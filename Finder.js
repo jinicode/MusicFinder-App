@@ -487,14 +487,14 @@ class Home6 extends React.Component {
     var arr = this.state.gameState.slice();
     arr[row][col] = currentPlayer;
     this.setState({gameState: arr});
-    var nextPlayer = (currentPlayer == 1) ? -1 : 1;
+    var nextPlayer = currentPlayer == 1 ? -1 : 1;
     this.setState({currentPlayer: nextPlayer});
     var winner = this.gameWinner();
     if (winner == 1) {
       Alert.alert('Player 1 won');
       this.initializeGame();
     } else if (winner == -1) {
-      Alert.alert('Player 2 won',"Thank You");
+      Alert.alert('Player 2 won', 'Thank You');
       this.initializeGame();
     }
   };
@@ -586,9 +586,7 @@ class Home6 extends React.Component {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => this.onTilePress(2, 2)}
-            style={
-              [styles.tile, {borderRightWidth: 0, borderBottomWidth: 0}]
-            }>
+            style={[styles.tile, {borderRightWidth: 0, borderBottomWidth: 0}]}>
             {this.renderIcon(2, 2)}
           </TouchableOpacity>
         </View>
@@ -598,31 +596,118 @@ class Home6 extends React.Component {
     );
   }
 }
+
+//9e319d0a0629544c6c70ef4878e34886
+class Home7 extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      text: '',
+      musics: [],
+    };
+  }
+  fetchMusic(text) {
+    this.setState({text});
+    fetch(
+      `http://ws.audioscrobbler.com/2.0/?method=artist.gettoptracks&artist=${text}&api_key=577bc22e1d9e8ddc826719c1f0c246eb&format=json`,
+    )
+      .then(data => data.json())
+      .then(music => {
+        this.setState({musics: music.toptracks.track.slice(0, 16)});
+      });
+  }
+  renderItem = ({item}) => {
+    return (
+      <ScrollView style={{marginBottom: 5}}>
+        <StatusBar backgroundColor="blue" barStyle="light-content" />
+        <TouchableOpacity
+          onPress={() => {
+            Linking.openURL(`${item.url}`);
+          }}
+          style={{flexDirection: 'row'}}>
+          <View>
+            <Text
+              style={{
+                fontSize: 28,
+                marginLeft: 10,
+                fontStyle: 'italic',
+                color: 'black',
+              }}>
+              {item.name}
+            </Text>
+            <Text
+              style={{
+                fontSize: 18,
+                marginLeft: 10,
+                fontStyle: 'italic',
+                color: 'red',
+              }}>
+              Views-
+              {item.playcount}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </ScrollView>
+    );
+  };
+  renderSeperator = () => {
+    return (
+      <View style={{height: 2, width: '100%', backgroundColor: 'black'}}></View>
+    );
+  };
+  render() {
+    return (
+      <View>
+        <TextInput
+          placeholder="Search Music"
+          style={{
+            color: 'black',
+
+            textAlign: 'center',
+            backgroundColor: '#d3e0d6',
+            fontSize: 23,
+          }}
+          onChangeText={text => {
+            this.fetchMusic(text);
+          }}
+          value={this.state.text}
+        />
+
+        <FlatList
+          style={{backgroundColor: `${randomRgb()}`}}
+          data={this.state.musics}
+          renderItem={this.renderItem}
+          keyExtractor={(item, index) => index}
+          ItemSeparatorComponent={this.renderSeperator}
+        />
+      </View>
+    );
+  }
+}
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-    paddingTop:50,
-    backgroundColor:"#b0d4e8"
+    paddingTop: 50,
+    backgroundColor: '#b0d4e8',
   },
   tile: {
-    
     borderWidth: 10,
     width: 100,
     height: 100,
   },
   tilex: {
-    marginLeft:15,
-    marginTop:10,
+    marginLeft: 15,
+    marginTop: 10,
     color: 'red',
     fontSize: 60,
   },
   tileo: {
     color: 'green',
     fontSize: 60,
-    marginLeft:15,
-    marginTop:10
+    marginLeft: 15,
+    marginTop: 10,
   },
 });
 const TabNavigator = createMaterialBottomTabNavigator(
@@ -694,7 +779,19 @@ const TabNavigator = createMaterialBottomTabNavigator(
         tabBarLabel: 'Game',
       },
     },
+    Home7: {
+      screen: Home7,
+      navigationOptions: {
+        tabBarIcon: () => (
+          <View>
+            <Icon name={'gamepad'} size={20}></Icon>
+          </View>
+        ),
+        tabBarLabel: 'Game',
+      },
+    },
   },
+  
   {
     shifting: false,
     initialRouteName: 'Home',
@@ -712,3 +809,8 @@ export default Finder;
 // Registered to	Jinit109
 // /2.0/?method=track.search&track=Believe&api_key=577bc22e1d9e8ddc826719c1f0c246eb&format=json
 //9e319d0a0629544c6c70ef4878e34886
+
+
+//q04Ks6uYOZ8UCU4bsdrgHRSW3R8KN5eL-wKbSnTT2gsptvZHJVHuUwtx2t7Rn7Vr client id
+//eJtbQoZ1R78VL93zMkrTlcprfLa9lwl-F-dlu0VLMmbxCUNYCsvbJquH0pukYlRmjuBuw0Q1Zt_8wv3CLz9V_g clinet secret
+//dI7VwJZcQMfaFQ5Emx4Cd2m8QKxMo48BD5sX9pX8ivpwM8ez-9gyqBUNdgI_H6vU client acces token
